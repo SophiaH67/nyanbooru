@@ -15,16 +15,6 @@ export default function Home() {
   const [posts, setPosts] = useState<Post[]>([]);
 
   useEffect(() => {
-    const tags: Tag[] = [
-      //@ts-expect-error - asd
-      { label: "tennouji rina", value: "tennouji_rina", key: "tennouji_rina" },
-      //@ts-expect-error - asd
-      { label: "hoodie", value: "hoodie", key: "hoodie" },
-    ];
-    setTags(tags);
-  }, []);
-
-  useEffect(() => {
     async function doStuff() {
       const tagsFlatClone = tags.map((tag) => tag.value).join("+");
       const res = await fetch(`/api/posts?tags=${tagsFlatClone}`);
