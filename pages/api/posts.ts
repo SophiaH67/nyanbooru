@@ -1,31 +1,11 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+import { cloudflareFetch } from "@/lib/cloudsolverr";
 import { Post } from "@/types/Post";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 type Data = {
   posts: Post[];
 };
-
-async function cloudflareFetch<T>(url: string): Promise<T> {
-  const response = await fetch(process.env.FLARESOLVERR_URL as string, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      cmd: "request.get",
-      maxTimeout: 60000,
-      url,
-    }),
-  });
-
-  const flaresolverResponse = await response.json();
-  let data = flaresolverResponse.solution.response;
-  //   Get rid of the chrome garbage html around the json
-  data = data.substring(data.indexOf("["), data.lastIndexOf("]") + 1);
-
-  return JSON.parse(data) as T;
-}
 
 async function getPosts({
   tags,
