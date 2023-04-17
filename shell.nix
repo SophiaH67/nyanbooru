@@ -4,7 +4,7 @@ in
   with nixpkgs;
 
   stdenv.mkDerivation {
-    name = "danboonyan";
+    name = "nyanbooru";
     buildInputs = [
       nodejs-16_x
     ];
