@@ -1,18 +1,49 @@
 import { DebounceSelect } from "@/components/DebounceSelect";
 import { PostCard } from "@/components/PostCard";
 import { Post } from "@/types/Post";
-import { Tag } from "@/types/Tag";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Masonry from "react-masonry-component";
+
+interface TagValue {
+  label: string;
+  value: string;
+}
 
 async function fetchTags(search: string) {
   const tags = await fetch(`/api/tags?search=${search}`);
   const data = await tags.json();
-  return data.tags as Tag[];
+  return data.tags as TagValue[];
 }
 export default function Home() {
-  const [tags, setTags] = useState<Tag[]>([]);
+  const router = useRouter();
+  const { tags: initialTagsStr = "" } = router.query;
+
+  if (Array.isArray(initialTagsStr)) throw new Error("Invalid tags");
+
+  const tags = initialTagsStr
+    .split("+")
+    .filter(Boolean)
+    .map((tag) => ({
+      label: tag,
+      value: tag,
+    }));
+
+  function setTags(tags: TagValue[]) {
+    // Update url
+    router.push(
+      {
+        pathname: "/",
+        query: {
+          tags: tags.map((tag) => tag.value).join("+"),
+        },
+      },
+      undefined,
+      { shallow: true }
+    );
+  }
+
   const [posts, setPosts] = useState<Post[]>([]);
 
   useEffect(() => {
@@ -38,8 +69,21 @@ export default function Home() {
         value={tags}
         placeholder="Select tags"
         fetchOptions={fetchTags}
-        onChange={(newValue) => {
-          setTags(newValue as Tag[]);
+        onChange={(newValuee) => {
+          const newValue = newValuee as TagValue[];
+          console.log("newValue", newValue);
+          setTags(newValue);
+          // Update url
+          router.push(
+            {
+              pathname: "/",
+              query: {
+                tags: newValue.map((tag) => tag.value).join("+"),
+              },
+            },
+            undefined,
+            { shallow: true }
+          );
         }}
         className="w-full"
         status={tags.length < 2 ? "error" : ""}
@@ -76,9 +120,6 @@ export default function Home() {
                     {
                       label: tag,
                       value: tag,
-                      category: 0,
-                      post_count: 0,
-                      type: "tag-word",
                     },
                   ]);
                 }}
