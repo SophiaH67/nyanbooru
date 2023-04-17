@@ -2,6 +2,7 @@ import { DebounceSelect } from "@/components/DebounceSelect";
 import { PostCard } from "@/components/PostCard";
 import { Post } from "@/types/Post";
 import { Tag } from "@/types/Tag";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import Masonry from "react-masonry-component";
 
@@ -44,9 +45,23 @@ export default function Home() {
         status={tags.length < 2 ? "error" : ""}
       />
       {tags.length < 2 ? (
-        <div className="text-center text-gray-500">
-          Select at least 2 tags to start
-        </div>
+        <>
+          <h1 className="text-center text-gray-700 text-5xl mt-[40vh]">
+            How to use
+          </h1>
+          <p className=" mx-auto max-w-xl mt-4 text-center text-gray-500">
+            Select two or more tags to see posts. The first two tags are
+            submitted to danbooru.donmai.us, the rest will be filtered
+            server-side. Cloudflare bypass is provided by{" "}
+            <Link
+              href="https://github.com/FlareSolverr/FlareSolverr"
+              className="text-blue-500"
+            >
+              FlareSolverr
+            </Link>
+            .
+          </p>
+        </>
       ) : (
         <>
           {/*@ts-expect-error - I love the half-arsed typing in this library!*/}
